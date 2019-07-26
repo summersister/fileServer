@@ -1,4 +1,4 @@
-package com.example.ljq;
+package com.example.interceptor;
 
 
 import org.springframework.context.annotation.Configuration;

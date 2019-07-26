@@ -1,5 +1,6 @@
 package com.example.api;
 
+import com.example.util.FileUtil;
 import io.micrometer.core.instrument.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -7,11 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.filechooser.FileSystemView;
-import java.awt.*;
 import java.io.*;
-import java.text.DecimalFormat;
 import java.util.*;
-import java.util.List;
 
 @RequestMapping("/api")
 @RestController
@@ -45,7 +43,7 @@ public class FileApi {
 
                     Map<String, String> map = new HashMap();
                     map.put("name", fs[i].getName());
-                    map.put("size", FormetFileSize(fs[i].length()));
+                    map.put("size", FileUtil.formetFileSize(fs[i].length()));
                     map.put("sizeMax", "");
                     map.put("id", this.createID(fs[i]));
                     map.put("isFile", fs[i].isFile() ? "0" : "1");
@@ -69,8 +67,8 @@ public class FileApi {
 
             Map<String, String> map = new HashMap();
             map.put("name", fsv.getSystemDisplayName(fs[i]));
-            map.put("size", FormetFileSize(fs[i].getFreeSpace()));
-            map.put("sizeMax", FormetFileSize(fs[i].getTotalSpace()));
+            map.put("size", FileUtil.formetFileSize(fs[i].getFreeSpace()));
+            map.put("sizeMax", FileUtil.formetFileSize(fs[i].getTotalSpace()));
             map.put("id", this.createID(fs[i]));
             map.put("isFile", "1");
             map.put("cp", "1");
@@ -83,21 +81,6 @@ public class FileApi {
         String uuid = UUID.randomUUID().toString();
         fileMap.put(uuid, f);
         return uuid;
-    }
-
-    private String FormetFileSize(long fileS) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeString = "";
-        if (fileS < 1024) {
-            fileSizeString = df.format((double) fileS) + "B";
-        } else if (fileS < 1048576) {
-            fileSizeString = df.format((double) fileS / 1024) + "K";
-        } else if (fileS < 1073741824) {
-            fileSizeString = df.format((double) fileS / 1048576) + "M";
-        } else {
-            fileSizeString = df.format((double) fileS / 1073741824) + "G";
-        }
-        return fileSizeString;
     }
 
     /**

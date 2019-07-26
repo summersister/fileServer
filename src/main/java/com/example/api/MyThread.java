@@ -1,11 +1,11 @@
 package com.example.api;
 
+import com.example.util.FileUtil;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.Map;
 
 @Component
@@ -28,8 +28,8 @@ public class MyThread {
 
                     str = String.valueOf(aaa).length() > 5 ? String.valueOf(aaa).substring(0,5) : String.valueOf(aaa);
 
-                    System.out.println(this.FormetFileSize(time) + "/"
-                            + this.FormetFileSize(length)
+                    System.out.println(FileUtil.formetFileSize(time) + "/"
+                            + FileUtil.formetFileSize(length)
                             + "--" +
                             str + "%");
                 } else {
@@ -61,19 +61,6 @@ public class MyThread {
     }
 
 
-    private String FormetFileSize(long fileS) {
-        DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeString = "";
-        if (fileS < 1024) {
-            fileSizeString = df.format((double) fileS) + "B";
-        } else if (fileS < 1048576) {
-            fileSizeString = df.format((double) fileS / 1024) + "K";
-        } else if (fileS < 1073741824) {
-            fileSizeString = df.format((double) fileS / 1048576) + "M";
-        } else {
-            fileSizeString = df.format((double) fileS / 1073741824) + "G";
-        }
-        return fileSizeString;
-    }
+
 
 }
