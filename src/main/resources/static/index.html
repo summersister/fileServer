@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<style>
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    html,body{
+        width: 100%;
+    }
+    ul,li{
+        list-style: none;
+    }
+    ul{
+        margin: 10px;
+        border-bottom:2px solid black;
+    }
+
+    li{
+
+    }
+    .liebiao{
+        /* display: flex; */
+    }
+    #btn1{
+        width: 100px;
+        height: 30px;
+        border-radius: 50px;
+        text-align: center;
+        line-height: 30px;
+        background: #000;
+        color:white;
+        cursor: pointer;
+    }
+    #btn2{
+        width: 100px;
+        height: 30px;
+        border-radius: 50px;
+        text-align: center;
+        line-height: 30px;
+        background: #000;
+        color:white;
+        cursor: pointer;
+    }
+    #btn3{
+        width: 100px;
+        height: 30px;
+        border-radius: 50px;
+        text-align: center;
+        line-height: 30px;
+        background: #000;
+        color:white;
+        cursor: pointer;
+    }
+</style>
+<body>
+<input type="file" id="fileUrl" >
+
+<button id="btn1">上传</button>
+<button id="btn2">清理</button>
+<button id="btn3">启动</button>
+<div id="dirList" class="liebiao"></div>
+</body>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script>
+    //上传控件
+
+    var currentId = "-1";
+
+    $('#btn2').click(function(){
+        $.ajax({
+            url: "/api/cleanMap",
+            data:{},
+            success: function(data){
+                console.log(data)
+
+                window.location.reload()
+            }
+        });
+    });
+
+    $('#btn1').click(function(){
+
+        var filePoint = $('#fileUrl');
+
+        //表单对象
+
+        var formData = new FormData();
+
+        formData.append('file', filePoint[0].files[0]);
+        formData.append('id', currentId);
+
+        $.ajax({
+            type: "post",
+            url: "/api/upload",
+            enctype: 'multipart/form-data',
+            async: true,
+            contentType: false,    //这个一定要写
+            processData: false, //这个也一定要写，不然会报错
+            data: formData,
+            dataType: 'json',
+            success: function (data) {
+                console.log(data);
+            }
+        });
+
+    });
+
+    $('#btn3').click(function(){
+        $('#btn3').attr('fileId', 'fileId');
+    });
+
+    console.log("初始化开始");
+
+    test("");
+
+    function test(id){
+
+        console.log("加载" + id);
+
+        $.ajax({
+            url: "/api/getDirList",
+            data:{id:id},
+            success: function(data){
+
+                console.log(data);
+                $('#dirList').empty();
+
+                for(var i = 0 ; i < data.length ; i++){
+
+                    var str = "";
+
+                    if(data[i].isFile == "0" || data[i].cp == "1"){
+
+                        str = "<li>"+data[i].size+"</li><li>"+data[i].sizeMax+"</li>";
+                    }
+
+                    $("#dirList").append(
+                        "<ul id='"+data[i].id+"' isFile='"+data[i].isFile+"' >" +
+                        "<li>"+data[i].name+"</li>" +
+                        str +
+                        "</ul>"
+                    );
+
+                    $('#'+data[i].id).click(function(){
+
+                        if($(this).attr('isFile') == '1'){
+
+                            var thisId = $(this).attr('id');
+
+                            currentId = thisId;
+                            test(thisId);
+
+                        } else {
+
+                            if($('#btn3').attr('fileId') == 'fileId'){
+                                $('#btn3').attr('fileId', '');
+
+                                $.ajax({
+                                    url: "/api/openFile",
+                                    data:{id: $(this).attr('id')},
+                                    success: function(data){
+                                        console.log(data);
+                                        alert("启动完毕");
+                                    }
+                                });
+
+                                return;
+                            }
+
+                            var str = '/api/download?id='+$(this).attr('id');
+
+                            console.log(str);
+                            window.open(str);
+                        }
+                    });
+                }
+            }
+        });
+    }
+</script>
+</html>

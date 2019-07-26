@@ -1,0 +1,9 @@
+server:
+  port: 20008
+
+
+spring:
+  servlet:
+    multipart:
+      maxFileSize: -1
+      maxRequestSize: -1
