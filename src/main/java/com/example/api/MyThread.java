@@ -28,8 +28,8 @@ public class MyThread {
 
                     str = String.valueOf(aaa).length() > 5 ? String.valueOf(aaa).substring(0,5) : String.valueOf(aaa);
 
-                    System.out.println(FileUtil.formetFileSize(time) + "/"
-                            + FileUtil.formetFileSize(length)
+                    System.out.println(FileUtil.formatFileSize(time) + "/"
+                            + FileUtil.formatFileSize(length)
                             + "--" +
                             str + "%");
                 } else {

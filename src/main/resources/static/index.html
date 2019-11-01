@@ -13,6 +13,7 @@
     }
     html,body{
         width: 100%;
+        background-image: url("555555.png");
     }
     ul,li{
         list-style: none;
@@ -59,13 +60,14 @@
         cursor: pointer;
     }
 </style>
-<body>
+<body background="555555.png">
 <input type="file" id="fileUrl" >
 
 <button id="btn1">上传</button>
 <button id="btn2">清理</button>
 <button id="btn3">启动</button>
 <div id="dirList" class="liebiao"></div>
+<div id="desktopList" class="liebiao"></div>
 </body>
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 <script>
@@ -179,6 +181,46 @@
                             console.log(str);
                             window.open(str);
                         }
+                    });
+                }
+            }
+        });
+    }
+
+    createDesktop();
+
+    function createDesktop() {
+
+        $.ajax({
+            url: "/api/getDesktopList",
+            data:{},
+            success: function(data){
+
+                console.log(data);
+
+                $('#desktopList').empty();
+
+                for(var i = 0 ; i < data.length ; i++){
+
+                    var str = "";
+
+                    if(data[i].isFile == "0" || data[i].cp == "1"){
+
+                        str = "<li>"+data[i].size+"</li><li>"+data[i].sizeMax+"</li>";
+                    }
+
+                    $("#desktopList").append(
+                        "<ul id='"+data[i].id+"' isFile='"+data[i].isFile+"' >" +
+                        "<li>"+data[i].name+"</li>" +
+                        str +
+                        "</ul>"
+                    );
+
+                    $('#'+data[i].id).click(function(){
+
+                        var str = '/api/download?id='+$(this).attr('id');
+                        console.log(str);
+                        window.open(str);
                     });
                 }
             }
